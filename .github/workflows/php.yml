@@ -33,7 +33,7 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: Check Coding Standard
-      run: composer cs -- --dry-run --diff -v
+      run: composer cs -- --dry-run --diff -v --show-progress=dots
       
     - name: Run tests
       run: composer tests
