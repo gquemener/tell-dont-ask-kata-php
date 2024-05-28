@@ -16,6 +16,7 @@ final class Order
 
     private float $total = 0;
 
+    /** @var ArrayCollection<int, OrderItem> $items */
     private ArrayCollection $items;
 
     private string $currency;
@@ -99,7 +100,7 @@ final class Order
     }
 
     /**
-     * @return ArrayCollection
+     * @return ArrayCollection<int, OrderItem>
      */
     public function getItems(): ArrayCollection
     {
@@ -107,7 +108,7 @@ final class Order
     }
 
     /**
-     * @param ArrayCollection $items
+     * @param ArrayCollection<int, OrderItem> $items
      * @return Order
      */
     public function setItems(ArrayCollection $items): Order

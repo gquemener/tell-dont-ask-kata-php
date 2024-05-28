@@ -10,5 +10,5 @@ interface OrderRepository
 {
     public function save(Order $order): void;
 
-    public function getById($orderId): Order;
+    public function getById(int $orderId): Order;
 }

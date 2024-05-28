@@ -34,6 +34,9 @@ jobs:
 
     - name: Check Coding Standard
       run: composer cs -- --dry-run --diff -v --show-progress=dots
+
+    - name: Check for bugs
+      run: composer phpstan -- --no-progress
       
     - name: Run tests
       run: composer tests

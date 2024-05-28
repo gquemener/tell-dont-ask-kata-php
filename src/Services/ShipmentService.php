@@ -8,5 +8,5 @@ use Pitchart\TellDontAskKata\Domain\Order;
 
 interface ShipmentService
 {
-    public function ship(Order $order);
+    public function ship(Order $order): void;
 }

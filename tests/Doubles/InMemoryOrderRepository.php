@@ -35,7 +35,7 @@ final class InMemoryOrderRepository implements OrderRepository
         $this->save($order);
     }
 
-    public function getById($orderId): Order
+    public function getById(int $orderId): Order
     {
         return $this->orders->findFirst(fn (int $key, Order $order) => $order->getId() == $orderId);
     }

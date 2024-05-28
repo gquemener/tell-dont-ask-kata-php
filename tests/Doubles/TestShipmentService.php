@@ -11,7 +11,7 @@ final class TestShipmentService implements ShipmentService
 {
     private ?Order $shippedOrder = null;
 
-    public function ship(Order $order)
+    public function ship(Order $order): void
     {
         $this->shippedOrder = $order;
     }
