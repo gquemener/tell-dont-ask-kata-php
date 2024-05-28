@@ -6,7 +6,7 @@
     "phpunit/phpunit": "^10.0",
     "friendsofphp/php-cs-fixer": "^3.57"
   },
-  "license": "GNU GENERAL PUBLIC LICENSE",
+  "license": "GPL-3.0-or-later",
   "autoload": {
     "psr-4": {
       "Pitchart\\TellDontAskKata\\": "src/"
