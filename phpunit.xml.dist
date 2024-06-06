@@ -9,8 +9,7 @@
          beStrictAboutOutputDuringTests="true"
          failOnRisky="true"
          failOnWarning="true"
-         colors="true"
-         testdox="true">
+         colors="true">
     <testsuites>
         <testsuite name="default">
             <directory>tests</directory>
