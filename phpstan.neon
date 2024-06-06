@@ -2,3 +2,7 @@ parameters:
     level: 9
     paths:
         - src
+    unused_public:
+        methods: true
+        properties: true
+        constants: true
