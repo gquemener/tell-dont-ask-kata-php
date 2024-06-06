@@ -8,11 +8,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 final class SellItemsRequest
 {
-    /** @var ArrayCollection<int, SellItemsRequest> */
+    /** @var ArrayCollection<int, SellItemRequest> */
     private ArrayCollection $items;
 
     /**
-     * @return ArrayCollection<int, SellItemsRequest>
+     * @return ArrayCollection<int, SellItemRequest>
      */
     public function getItems(): ArrayCollection
     {
@@ -20,7 +20,7 @@ final class SellItemsRequest
     }
 
     /**
-     * @param ArrayCollection<int, SellItemsRequest> $items
+     * @param ArrayCollection<int, SellItemRequest> $items
      * @return SellItemsRequest
      */
     public function setItems(ArrayCollection $items): SellItemsRequest

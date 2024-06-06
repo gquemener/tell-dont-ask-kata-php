@@ -28,7 +28,7 @@ final class OrderApprovalUseCaseTest extends TestCase
         $this->useCase = new OrderApprovalUseCase($this->orderRepository);
     }
 
-    public function test_approve_existing_order()
+    public function test_approve_existing_order(): void
     {
         $initialOrder = (new Order())->setStatus(OrderStatus::Created)->setId(1);
 
