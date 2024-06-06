@@ -40,3 +40,14 @@ composer tests
 ```bash
 composer cs
 ```
+
+## Tips
+
+Difficulty order of the use case class refactorings:
+  - Order approval
+  - Order shipment
+  - Order creation
+
+# TODO
+
+- [ ] Detect dead code (ie: unused methods)
