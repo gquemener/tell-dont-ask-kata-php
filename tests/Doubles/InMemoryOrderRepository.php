@@ -32,7 +32,7 @@ final class InMemoryOrderRepository implements OrderRepository
 
     public function addOrder(Order $order): void
     {
-        $this->save($order);
+        $this->orders->add($order);
     }
 
     public function getById(int $orderId): Order

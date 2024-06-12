@@ -43,7 +43,7 @@ final class OrderApprovalUseCaseTest extends TestCase
     }
 
 
-    public function RejectedExistingOrder(): void
+    public function test_RejectedExistingOrder(): void
     {
         $initialOrder = (new Order())->setStatus(OrderStatus::Created)->setId(1);
 

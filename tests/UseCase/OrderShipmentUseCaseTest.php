@@ -43,6 +43,7 @@ final class OrderShipmentUseCaseTest extends TestCase
 
         $savedOrder = $this->orderRepository->getSavedOrder();
         Assert::assertEquals(OrderStatus::Shipped, $savedOrder->getStatus());
+        Assert::assertEquals($savedOrder, $this->shipmentService->getShippedOrder());
     }
 
 
@@ -56,10 +57,12 @@ final class OrderShipmentUseCaseTest extends TestCase
 
         $this->expectException(OrderCannotBeShippedException::class);
 
-        $this->useCase->run($request);
-
-        Assert::assertNull($this->orderRepository->getSavedOrder());
-        Assert::assertNull($this->shipmentService->getShippedOrder());
+        try {
+            $this->useCase->run($request);
+        } finally {
+            Assert::assertNull($this->orderRepository->getSavedOrder());
+            Assert::assertNull($this->shipmentService->getShippedOrder());
+        }
     }
 
 
@@ -73,10 +76,12 @@ final class OrderShipmentUseCaseTest extends TestCase
 
         $this->expectException(OrderCannotBeShippedException::class);
 
-        $this->useCase->run($request);
-
-        Assert::assertNull($this->orderRepository->getSavedOrder());
-        Assert::assertNull($this->shipmentService->getShippedOrder());
+        try {
+            $this->useCase->run($request);
+        } finally {
+            Assert::assertNull($this->orderRepository->getSavedOrder());
+            Assert::assertNull($this->shipmentService->getShippedOrder());
+        }
     }
 
 
@@ -90,10 +95,14 @@ final class OrderShipmentUseCaseTest extends TestCase
 
         $this->expectException(OrderCannotBeShippedTwiceException::class);
 
-        $this->useCase->run($request);
+        try {
 
-        Assert::assertNull($this->orderRepository->getSavedOrder());
-        Assert::assertNull($this->shipmentService->getShippedOrder());
+            $this->useCase->run($request);
+        } finally {
+            Assert::assertNull($this->orderRepository->getSavedOrder());
+            Assert::assertNull($this->shipmentService->getShippedOrder());
+        }
+
     }
 
 }
