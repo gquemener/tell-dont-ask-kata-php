@@ -6,33 +6,12 @@ namespace Pitchart\TellDontAskKata\UseCase;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-final class SellItemsRequest
+final readonly class SellItemsRequest
 {
-    /** @var ArrayCollection<int, SellItemRequest> */
-    private ArrayCollection $items;
+    public ArrayCollection $items;
 
-    /**
-     * @return ArrayCollection<int, SellItemRequest>
-     */
-    public function getItems(): ArrayCollection
+    public function __construct(SellItemRequest ...$items)
     {
-        return $this->items;
+        $this->items = new ArrayCollection($items);
     }
-
-    /**
-     * @param ArrayCollection<int, SellItemRequest> $items
-     * @return SellItemsRequest
-     */
-    public function setItems(ArrayCollection $items): SellItemsRequest
-    {
-        $this->items = $items;
-        return $this;
-    }
-
-    public function __construct()
-    {
-        $this->items = new ArrayCollection();
-    }
-
-
 }

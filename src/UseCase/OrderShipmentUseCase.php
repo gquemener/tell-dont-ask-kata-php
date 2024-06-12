@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Pitchart\TellDontAskKata\UseCase;
 
-use Pitchart\TellDontAskKata\Domain\OrderStatus;
 use Pitchart\TellDontAskKata\Repository\OrderRepository;
 use Pitchart\TellDontAskKata\Services\ShipmentService;
 
@@ -29,19 +28,10 @@ final class OrderShipmentUseCase
      */
     public function run(OrderShipmentRequest $request): void
     {
-        $order = $this->repository->GetById($request->getId());
+        $order = $this->repository->getById($request->id);
 
-        if ($order->getStatus() == OrderStatus::Created || $order->getStatus() == OrderStatus::Rejected) {
-            throw new OrderCannotBeShippedException();
-        }
+        $order->ship($this->shipmentService);
 
-        if ($order->getStatus() == OrderStatus::Shipped) {
-            throw new OrderCannotBeShippedTwiceException();
-        }
-
-        $this->shipmentService->ship($order);
-
-        $order->setStatus(OrderStatus::Shipped);
         $this->repository->save($order);
     }
 }

@@ -14,6 +14,24 @@ final class OrderItem
 
     private Product $product;
 
+    private function __construct()
+    {
+    }
+
+    public static function of(Product $product, int $quantity): self
+    {
+        $self = new self();
+        $unitaryTax = self::round(($product->getPrice() / 100) * $product->getCategory()->getTaxPercentage());
+        $unitaryTaxedAmount = self::round($product->getPrice() + $unitaryTax);
+
+        $self->product = $product;
+        $self->quantity = $quantity;
+        $self->taxedAmount = self::round($unitaryTaxedAmount * $quantity);
+        $self->tax = self::round($unitaryTax * $quantity);
+
+        return $self;
+    }
+
     /**
      * @param float $tax
      * @return OrderItem
@@ -76,5 +94,10 @@ final class OrderItem
     {
         $this->quantity = $quantity;
         return $this;
+    }
+
+    private static function round(float $amount): float
+    {
+        return round($amount, 2);
     }
 }

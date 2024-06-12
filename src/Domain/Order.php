@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace Pitchart\TellDontAskKata\Domain;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Pitchart\TellDontAskKata\Services\ShipmentService;
+use Pitchart\TellDontAskKata\UseCase\ApprovedOrderCannotBeRejectedException;
+use Pitchart\TellDontAskKata\UseCase\OrderCannotBeShippedException;
+use Pitchart\TellDontAskKata\UseCase\OrderCannotBeShippedTwiceException;
+use Pitchart\TellDontAskKata\UseCase\RejectedOrderCannotBeApprovedException;
+use Pitchart\TellDontAskKata\UseCase\ShippedOrdersCannotBeChangedException;
 
 final class Order
 {
@@ -21,9 +27,26 @@ final class Order
 
     private string $currency;
 
-    public function __construct()
+    private function __construct()
     {
         $this->items = new ArrayCollection();
+    }
+
+    public static function create(int $id, string $currency): self
+    {
+        $self = new self();
+        $self->id = $id;
+        $self->status = OrderStatus::Created;
+        $self->currency = $currency;
+
+        return $self;
+    }
+
+    public function addItem(OrderItem $orderItem): void
+    {
+        $this->items->add($orderItem);
+        $this->total += $orderItem->getTaxedAmount();
+        $this->tax += $orderItem->getTax();
     }
 
     /**
@@ -135,4 +158,39 @@ final class Order
         return $this;
     }
 
+    public function approve(): void
+    {
+        if ($this->status == OrderStatus::Shipped) {
+            throw new ShippedOrdersCannotBeChangedException();
+        }
+        if ($this->status == OrderStatus::Rejected) {
+            throw new RejectedOrderCannotBeApprovedException();
+        }
+
+        $this->status = OrderStatus::Approved;
+    }
+
+    public function reject(): void
+    {
+        if ($this->status == OrderStatus::Shipped) {
+            throw new ShippedOrdersCannotBeChangedException();
+        }
+        if ($this->status == OrderStatus::Approved) {
+            throw new ApprovedOrderCannotBeRejectedException();
+        }
+        $this->status = OrderStatus::Rejected;
+    }
+
+    public function ship(ShipmentService $shipmentService): void
+    {
+        if ($this->status == OrderStatus::Created || $this->status == OrderStatus::Rejected) {
+            throw new OrderCannotBeShippedException();
+        }
+
+        if ($this->status == OrderStatus::Shipped) {
+            throw new OrderCannotBeShippedTwiceException();
+        }
+        $this->status = OrderStatus::Shipped;
+        $shipmentService->ship($this);
+    }
 }

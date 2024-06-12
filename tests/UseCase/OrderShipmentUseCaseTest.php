@@ -13,6 +13,7 @@ use Pitchart\TellDontAskKata\UseCase\OrderCannotBeShippedTwiceException;
 use Pitchart\TellDontAskKata\UseCase\OrderShipmentRequest;
 use Pitchart\TellDontAskKata\UseCase\OrderShipmentUseCase;
 use Tests\Pitchart\TellDontAskKata\Doubles\InMemoryOrderRepository;
+use Tests\Pitchart\TellDontAskKata\Doubles\NullShipmentService;
 use Tests\Pitchart\TellDontAskKata\Doubles\TestShipmentService;
 
 final class OrderShipmentUseCaseTest extends TestCase
@@ -33,27 +34,29 @@ final class OrderShipmentUseCaseTest extends TestCase
 
     public function test_ship_approved_order(): void
     {
-        $initialOrder = (new Order())->setStatus(OrderStatus::Approved)->setId(1);
+        $initialOrder = Order::create(1, 'EUR');
+        $initialOrder->approve();
 
         $this->orderRepository->addOrder($initialOrder);
 
-        $request = (new OrderShipmentRequest())->setId(1);
+        $request = new OrderShipmentRequest(1);
 
         $this->useCase->run($request);
 
         $savedOrder = $this->orderRepository->getSavedOrder();
+        Assert::assertNotNull($savedOrder);
         Assert::assertEquals(OrderStatus::Shipped, $savedOrder->getStatus());
         Assert::assertEquals($savedOrder, $this->shipmentService->getShippedOrder());
     }
 
 
-    public function test_created_orders_can_not_be_shipped()
+    public function test_created_orders_can_not_be_shipped(): void
     {
-        $initialOrder = (new Order())->setStatus(OrderStatus::Created)->setId(1);
+        $initialOrder = Order::create(1, 'EUR');
 
         $this->orderRepository->addOrder($initialOrder);
 
-        $request = (new OrderShipmentRequest())->setId(1);
+        $request = new OrderShipmentRequest(1);
 
         $this->expectException(OrderCannotBeShippedException::class);
 
@@ -68,11 +71,12 @@ final class OrderShipmentUseCaseTest extends TestCase
 
     public function test_rejected_orders_can_not_be_shipped()
     {
-        $initialOrder = (new Order())->setStatus(OrderStatus::Rejected)->setId(1);
+        $initialOrder = Order::create(1, 'EUR');
+        $initialOrder->reject();
 
         $this->orderRepository->addOrder($initialOrder);
 
-        $request = (new OrderShipmentRequest())->setId(1);
+        $request = new OrderShipmentRequest(1);
 
         $this->expectException(OrderCannotBeShippedException::class);
 
@@ -87,11 +91,13 @@ final class OrderShipmentUseCaseTest extends TestCase
 
     public function test_shipped_orders_can_not_be_shipped_again()
     {
-        $initialOrder = (new Order())->setStatus(OrderStatus::Shipped)->setId(1);
+        $initialOrder = Order::create(1, 'EUR');
+        $initialOrder->approve();
+        $initialOrder->ship(new NullShipmentService());
 
         $this->orderRepository->addOrder($initialOrder);
 
-        $request = (new OrderShipmentRequest())->setId(1);
+        $request = new OrderShipmentRequest(1);
 
         $this->expectException(OrderCannotBeShippedTwiceException::class);
 

@@ -14,6 +14,7 @@ use Pitchart\TellDontAskKata\UseCase\OrderApprovalUseCase;
 use Pitchart\TellDontAskKata\UseCase\RejectedOrderCannotBeApprovedException;
 use Pitchart\TellDontAskKata\UseCase\ShippedOrdersCannotBeChangedException;
 use Tests\Pitchart\TellDontAskKata\Doubles\InMemoryOrderRepository;
+use Tests\Pitchart\TellDontAskKata\Doubles\NullShipmentService;
 
 final class OrderApprovalUseCaseTest extends TestCase
 {
@@ -30,11 +31,11 @@ final class OrderApprovalUseCaseTest extends TestCase
 
     public function test_approve_existing_order(): void
     {
-        $initialOrder = (new Order())->setStatus(OrderStatus::Created)->setId(1);
+        $initialOrder = Order::create(1, 'EUR');
 
         $this->orderRepository->addOrder($initialOrder);
 
-        $request = (new OrderApprovalRequest())->setId(1)->setApproved(true);
+        $request = new OrderApprovalRequest(1, true);
 
         $this->useCase->run($request);
 
@@ -43,13 +44,13 @@ final class OrderApprovalUseCaseTest extends TestCase
     }
 
 
-    public function test_RejectedExistingOrder(): void
+    public function test_reject_existing_order(): void
     {
-        $initialOrder = (new Order())->setStatus(OrderStatus::Created)->setId(1);
+        $initialOrder = Order::create(1, 'EUR');
 
         $this->orderRepository->addOrder($initialOrder);
 
-        $request = (new OrderApprovalRequest())->setId(1)->setApproved(false);
+        $request = new OrderApprovalRequest(1, false);
 
         $this->useCase->run($request);
 
@@ -59,10 +60,11 @@ final class OrderApprovalUseCaseTest extends TestCase
 
     public function test_can_not_approve_rejected_order(): void
     {
-        $initialOrder = (new Order())->setStatus(OrderStatus::Rejected)->setId(1);
+        $initialOrder = Order::create(1, 'EUR');
+        $initialOrder->reject();
         $this->orderRepository->addOrder($initialOrder);
 
-        $request = (new OrderApprovalRequest())->setId(1)->setApproved(true);
+        $request = new OrderApprovalRequest(1, true);
 
         $this->expectException(RejectedOrderCannotBeApprovedException::class);
 
@@ -74,10 +76,11 @@ final class OrderApprovalUseCaseTest extends TestCase
 
     public function test_can_not_reject_approved_order(): void
     {
-        $initialOrder = (new Order())->setStatus(OrderStatus::Approved)->setId(1);
+        $initialOrder = Order::create(1, 'EUR');
+        $initialOrder->approve();
         $this->orderRepository->addOrder($initialOrder);
 
-        $request = (new OrderApprovalRequest())->setId(1)->setApproved(false);
+        $request = new OrderApprovalRequest(1, false);
 
         $this->expectException(ApprovedOrderCannotBeRejectedException::class);
 
@@ -89,10 +92,12 @@ final class OrderApprovalUseCaseTest extends TestCase
 
     public function test_shipped_orders_cannot_be_rejected(): void
     {
-        $initialOrder = (new Order())->setStatus(OrderStatus::Shipped)->setId(1);
+        $initialOrder = Order::create(1, 'EUR');
+        $initialOrder->approve();
+        $initialOrder->ship(new NullShipmentService());
         $this->orderRepository->addOrder($initialOrder);
 
-        $request = (new OrderApprovalRequest())->setId(1)->setApproved(false);
+        $request = new OrderApprovalRequest(1, false);
 
         $this->expectException(ShippedOrdersCannotBeChangedException::class);
 

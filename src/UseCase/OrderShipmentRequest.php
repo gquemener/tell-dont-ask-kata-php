@@ -4,31 +4,10 @@ declare(strict_types=1);
 
 namespace Pitchart\TellDontAskKata\UseCase;
 
-final class OrderShipmentRequest
+final readonly class OrderShipmentRequest
 {
-    private int $id = 0;
-
-    public function __construct()
-    {
+    public function __construct(
+        public int $id,
+    ) {
     }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     * @return OrderShipmentRequest
-     */
-    public function setId(int $id): OrderShipmentRequest
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-
 }
